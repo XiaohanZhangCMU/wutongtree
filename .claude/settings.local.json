@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)",
+      "Bash(./run_tests.sh)",
+      "Bash(./run_integration_tests.sh:*)",
+      "Bash(rm:*)",
+      "Bash(./fix_build_issues.sh:*)",
+      "Bash(./verify_build_setup.sh:*)"
+    ],
+    "deny": []
+  }
+}

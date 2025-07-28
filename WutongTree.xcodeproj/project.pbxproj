@@ -1,0 +1,453 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D41234567890ABCDEF /* WutongTreeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D31234567890ABCDEF /* WutongTreeApp.swift */; };
+		A1B2C3D61234567890ABCDEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D51234567890ABCDEF /* ContentView.swift */; };
+		A1B2C3D81234567890ABCDEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D71234567890ABCDEF /* Assets.xcassets */; };
+		A1B2C3DB1234567890ABCDEF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3DA1234567890ABCDEF /* Preview Assets.xcassets */; };
+		B1C2D3E41234567890ABCDEF /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E31234567890ABCDEF /* AuthenticationViewModel.swift */; };
+		B1C2D3E61234567890ABCDEF /* VoiceRecordingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E51234567890ABCDEF /* VoiceRecordingViewModel.swift */; };
+		B1C2D3E81234567890ABCDEF /* MatchingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E71234567890ABCDEF /* MatchingViewModel.swift */; };
+		B1C2D3EA1234567890ABCDEF /* ChatRoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E91234567890ABCDEF /* ChatRoomViewModel.swift */; };
+		B1C2D3EC1234567890ABCDEF /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3EB1234567890ABCDEF /* WelcomeView.swift */; };
+		B1C2D3EE1234567890ABCDEF /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3ED1234567890ABCDEF /* MainTabView.swift */; };
+		B1C2D3F01234567890ABCDEF /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3EF1234567890ABCDEF /* HomeView.swift */; };
+		B1C2D3F21234567890ABCDEF /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3F11234567890ABCDEF /* OnboardingView.swift */; };
+		B1C2D3F41234567890ABCDEF /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3F31234567890ABCDEF /* ChatRoomView.swift */; };
+		B1C2D3F61234567890ABCDEF /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3F51234567890ABCDEF /* ProfileView.swift */; };
+		B1C2D3F81234567890ABCDEF /* ConversationHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3F71234567890ABCDEF /* ConversationHistoryView.swift */; };
+		B1C2D3FA1234567890ABCDEF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3F91234567890ABCDEF /* SettingsView.swift */; };
+		B1C2D3FC1234567890ABCDEF /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3FB1234567890ABCDEF /* FeedbackView.swift */; };
+		B1C2D3FE1234567890ABCDEF /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3FD1234567890ABCDEF /* User.swift */; };
+		B1C2D4001234567890ABCDEF /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3FF1234567890ABCDEF /* ChatRoom.swift */; };
+		B1C2D4021234567890ABCDEF /* AudioPermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1B2C3D01234567890ABCDEF /* WutongTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WutongTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D31234567890ABCDEF /* WutongTreeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WutongTreeApp.swift; sourceTree = "<group>"; };
+		A1B2C3D51234567890ABCDEF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1B2C3D71234567890ABCDEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1B2C3DA1234567890ABCDEF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B1C2D3E31234567890ABCDEF /* AuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewModel.swift; sourceTree = "<group>"; };
+		B1C2D3E51234567890ABCDEF /* VoiceRecordingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecordingViewModel.swift; sourceTree = "<group>"; };
+		B1C2D3E71234567890ABCDEF /* MatchingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchingViewModel.swift; sourceTree = "<group>"; };
+		B1C2D3E91234567890ABCDEF /* ChatRoomViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewModel.swift; sourceTree = "<group>"; };
+		B1C2D3EB1234567890ABCDEF /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		B1C2D3ED1234567890ABCDEF /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		B1C2D3EF1234567890ABCDEF /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B1C2D3F11234567890ABCDEF /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		B1C2D3F31234567890ABCDEF /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
+		B1C2D3F51234567890ABCDEF /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		B1C2D3F71234567890ABCDEF /* ConversationHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationHistoryView.swift; sourceTree = "<group>"; };
+		B1C2D3F91234567890ABCDEF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B1C2D3FB1234567890ABCDEF /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		B1C2D3FD1234567890ABCDEF /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		B1C2D3FF1234567890ABCDEF /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
+		B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionService.swift; sourceTree = "<group>"; };
+		C5B709B12E36F9640017CE1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E7F8A9B01234567890ABCDEF /* WutongTree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WutongTree.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1B2C3CD1234567890ABCDEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1B2C3C71234567890ABCDEF = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D21234567890ABCDEF /* WutongTree */,
+				A1B2C3D11234567890ABCDEF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1B2C3D11234567890ABCDEF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D01234567890ABCDEF /* WutongTree.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1B2C3D21234567890ABCDEF /* WutongTree */ = {
+			isa = PBXGroup;
+			children = (
+				C5B709B12E36F9640017CE1E /* Info.plist */,
+				E7F8A9B01234567890ABCDEF /* WutongTree.entitlements */,
+				A1B2C3D31234567890ABCDEF /* WutongTreeApp.swift */,
+				A1B2C3D51234567890ABCDEF /* ContentView.swift */,
+				B1C2D4031234567890ABCDEF /* Views */,
+				B1C2D4041234567890ABCDEF /* ViewModels */,
+				B1C2D4051234567890ABCDEF /* Models */,
+				B1C2D4061234567890ABCDEF /* Services */,
+				A1B2C3D71234567890ABCDEF /* Assets.xcassets */,
+				A1B2C3D91234567890ABCDEF /* Preview Content */,
+			);
+			path = WutongTree;
+			sourceTree = "<group>";
+		};
+		A1B2C3D91234567890ABCDEF /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3DA1234567890ABCDEF /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B1C2D4031234567890ABCDEF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3EB1234567890ABCDEF /* WelcomeView.swift */,
+				B1C2D3ED1234567890ABCDEF /* MainTabView.swift */,
+				B1C2D3EF1234567890ABCDEF /* HomeView.swift */,
+				B1C2D3F11234567890ABCDEF /* OnboardingView.swift */,
+				B1C2D3F31234567890ABCDEF /* ChatRoomView.swift */,
+				B1C2D3F51234567890ABCDEF /* ProfileView.swift */,
+				B1C2D3F71234567890ABCDEF /* ConversationHistoryView.swift */,
+				B1C2D3F91234567890ABCDEF /* SettingsView.swift */,
+				B1C2D3FB1234567890ABCDEF /* FeedbackView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B1C2D4041234567890ABCDEF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3E31234567890ABCDEF /* AuthenticationViewModel.swift */,
+				B1C2D3E51234567890ABCDEF /* VoiceRecordingViewModel.swift */,
+				B1C2D3E71234567890ABCDEF /* MatchingViewModel.swift */,
+				B1C2D3E91234567890ABCDEF /* ChatRoomViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B1C2D4051234567890ABCDEF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3FD1234567890ABCDEF /* User.swift */,
+				B1C2D3FF1234567890ABCDEF /* ChatRoom.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B1C2D4061234567890ABCDEF /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3CF1234567890ABCDEF /* WutongTree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3DE1234567890ABCDEF /* Build configuration list for PBXNativeTarget "WutongTree" */;
+			buildPhases = (
+				A1B2C3CC1234567890ABCDEF /* Sources */,
+				A1B2C3CD1234567890ABCDEF /* Frameworks */,
+				A1B2C3CE1234567890ABCDEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WutongTree;
+			productName = WutongTree;
+			productReference = A1B2C3D01234567890ABCDEF /* WutongTree.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3C81234567890ABCDEF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A1B2C3CF1234567890ABCDEF = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1B2C3CB1234567890ABCDEF /* Build configuration list for PBXProject "WutongTree" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3C71234567890ABCDEF;
+			productRefGroup = A1B2C3D11234567890ABCDEF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3CF1234567890ABCDEF /* WutongTree */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3CE1234567890ABCDEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3DB1234567890ABCDEF /* Preview Assets.xcassets in Resources */,
+				A1B2C3D81234567890ABCDEF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3CC1234567890ABCDEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D61234567890ABCDEF /* ContentView.swift in Sources */,
+				A1B2C3D41234567890ABCDEF /* WutongTreeApp.swift in Sources */,
+				B1C2D3E41234567890ABCDEF /* AuthenticationViewModel.swift in Sources */,
+				B1C2D3E61234567890ABCDEF /* VoiceRecordingViewModel.swift in Sources */,
+				B1C2D3E81234567890ABCDEF /* MatchingViewModel.swift in Sources */,
+				B1C2D3EA1234567890ABCDEF /* ChatRoomViewModel.swift in Sources */,
+				B1C2D3EC1234567890ABCDEF /* WelcomeView.swift in Sources */,
+				B1C2D3EE1234567890ABCDEF /* MainTabView.swift in Sources */,
+				B1C2D3F01234567890ABCDEF /* HomeView.swift in Sources */,
+				B1C2D3F21234567890ABCDEF /* OnboardingView.swift in Sources */,
+				B1C2D3F41234567890ABCDEF /* ChatRoomView.swift in Sources */,
+				B1C2D3F61234567890ABCDEF /* ProfileView.swift in Sources */,
+				B1C2D3F81234567890ABCDEF /* ConversationHistoryView.swift in Sources */,
+				B1C2D3FA1234567890ABCDEF /* SettingsView.swift in Sources */,
+				B1C2D3FC1234567890ABCDEF /* FeedbackView.swift in Sources */,
+				B1C2D3FE1234567890ABCDEF /* User.swift in Sources */,
+				B1C2D4001234567890ABCDEF /* ChatRoom.swift in Sources */,
+				B1C2D4021234567890ABCDEF /* AudioPermissionService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3DC1234567890ABCDEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1B2C3DD1234567890ABCDEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A1B2C3DF1234567890ABCDEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WutongTree/WutongTree.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WutongTree/Preview Content\"";
+				DEVELOPMENT_TEAM = 9TBKNCZ264;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WutongTree/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wutongtree.WutongTree;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1B2C3E01234567890ABCDEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WutongTree/WutongTree.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"WutongTree/Preview Content\"";
+				DEVELOPMENT_TEAM = 9TBKNCZ264;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WutongTree/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wutongtree.WutongTree;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3CB1234567890ABCDEF /* Build configuration list for PBXProject "WutongTree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3DC1234567890ABCDEF /* Debug */,
+				A1B2C3DD1234567890ABCDEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3DE1234567890ABCDEF /* Build configuration list for PBXNativeTarget "WutongTree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3DF1234567890ABCDEF /* Debug */,
+				A1B2C3E01234567890ABCDEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1B2C3C81234567890ABCDEF /* Project object */;
+}

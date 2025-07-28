@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>WutongTree</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>WutongTree needs microphone access for voice conversations and personality analysis to match you with compatible conversation partners.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>WutongTree uses the camera to let you add a profile photo during onboarding.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>WutongTree needs access to your photo library to let you select a profile photo.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>microphone</string>
+	</array>
+</dict>
+</plist>
