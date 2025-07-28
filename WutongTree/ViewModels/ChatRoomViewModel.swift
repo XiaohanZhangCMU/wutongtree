@@ -20,6 +20,7 @@ class ChatRoomViewModel: ObservableObject {
     private var recordingTimer: Timer?
     private var volumeTimer: Timer?
     private var aiResponseTimer: Timer?
+    private var hostPersonality = HostPersonalityService()
     private var cancellables = Set<AnyCancellable>()
     private var conversationStep = 0
     
@@ -75,23 +76,6 @@ class ChatRoomViewModel: ObservableObject {
                     self?.speakingParticipants.insert("current_user")
                 } else {
                     self?.speakingParticipants.remove("current_user")
-                    // When user stops speaking, add their message
-                    if let transcription = self?.userTranscription, !transcription.isEmpty {
-                        self?.addUserMessage(transcription)
-                        // Check if user mentioned MoMo
-                        let lowerText = transcription.lowercased()
-                        if lowerText.contains("momo") || lowerText.contains("host") {
-                            print("🤖 ChatRoom: User mentioned MoMo, triggering AI response")
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                self?.generateAIResponse()
-                            }
-                        }
-                        
-                        // Trigger participant response after user speaks
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            self?.generateMorganResponse()
-                        }
-                    }
                 }
             }
             .store(in: &cancellables)
@@ -105,6 +89,35 @@ class ChatRoomViewModel: ObservableObject {
     func stopUserSpeech() {
         print("ChatRoom: Stopping user speech")
         sttService.stopListening()
+        
+        // When user manually stops, send their message
+        if !userTranscription.isEmpty {
+            addUserMessage(userTranscription)
+            
+            // Check if user mentioned MoMo
+            let lowerText = userTranscription.lowercased()
+            if lowerText.contains("momo") || lowerText.contains("host") {
+                print("🤖 ChatRoom: User mentioned MoMo, triggering AI response")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.generateAIResponse()
+                }
+            }
+            
+            // Trigger participant response after user speaks
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.generateMorganResponse()
+            }
+        }
+    }
+    
+    func toggleMicrophone() {
+        if isUserSpeaking {
+            print("ChatRoom: User toggled microphone OFF")
+            stopUserSpeech()
+        } else {
+            print("ChatRoom: User toggled microphone ON")
+            startUserSpeech()
+        }
     }
     
     private func addUserMessage(_ text: String) {
@@ -203,9 +216,11 @@ class ChatRoomViewModel: ObservableObject {
         guard let chatRoom = chatRoom else { throw LLMError.noContentError }
         
         let systemPrompt = """
-        You are MoMo, the AI host for WutongTree voice chat. Be natural, brief, and conversational.
+        You're a chat host. Be natural, brief, and conversational.
         
         Generate a short welcome (1 sentence max, 10 words or less). Just say hi and maybe ask a simple question to get people talking.
+        
+        IMPORTANT: Don't say your name. Just welcome people naturally.
         
         Examples: "Hey everyone! How's your day going?" or "Welcome! What's everyone up to?"
         """
@@ -223,15 +238,35 @@ class ChatRoomViewModel: ObservableObject {
     }
     
     private func startAIConversationFlow() {
-        // Only generate AI responses occasionally to break silence, not constantly
-        aiResponseTimer = Timer.scheduledTimer(withTimeInterval: 45, repeats: true) { [weak self] _ in
-            // Only respond if there hasn't been recent user activity
+        // Natural hosting timing - varies based on conversation flow
+        aiResponseTimer = Timer.scheduledTimer(withTimeInterval: 8, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             let timeSinceLastMessage = Date().timeIntervalSince(self.messages.last?.timestamp ?? Date.distantPast)
-            if timeSinceLastMessage > 30 { // Only if quiet for 30+ seconds
-                self.generateAIResponse()
+            
+            // Natural response timing: 5-12 seconds based on conversation
+            let responseThreshold = self.calculateNaturalResponseTime()
+            
+            if timeSinceLastMessage > responseThreshold {
+                // Add slight delay to feel more natural (like thinking)
+                let thinkingDelay = Double.random(in: 0.5...2.0)
+                DispatchQueue.main.asyncAfter(deadline: .now() + thinkingDelay) {
+                    print("🤖 ChatRoom: Natural conversation timing - MoMo responding")
+                    self.generateAIResponse()
+                }
             }
         }
+    }
+    
+    private func calculateNaturalResponseTime() -> TimeInterval {
+        let recentMessages = Array(messages.suffix(3))
+        
+        // Shorter wait if conversation is active
+        if recentMessages.count >= 2 {
+            return Double.random(in: 5...8)
+        }
+        
+        // Longer wait if conversation is just starting
+        return Double.random(in: 8...12)
     }
     
     
@@ -327,16 +362,10 @@ class ChatRoomViewModel: ObservableObject {
     private func generateHostResponse(using llmService: LLMService) async throws -> String {
         guard let chatRoom = chatRoom else { throw LLMError.noContentError }
         
-        let systemPrompt = """
-        You're MoMo, a chat host. Keep responses VERY short (5-10 words max), natural, and conversational like a real person.
-        
-        Just ask simple questions or make brief comments to keep the chat flowing. No emojis needed.
-        
-        Examples: "That's cool!" or "Tell me more" or "Anyone else agree?"
-        """
-        
-        // Get recent conversation context
+        // Get contextual prompt from personality service
         let recentMessages = Array(messages.suffix(5))
+        let (systemPrompt, dynamicTemperature) = hostPersonality.generateContextualPrompt(recentMessages: recentMessages)
+        
         var llmMessages: [LLMMessage] = [
             LLMMessage(role: "system", content: systemPrompt)
         ]
@@ -348,12 +377,12 @@ class ChatRoomViewModel: ObservableObject {
         }
         
         // Add instruction for next response
-        llmMessages.append(LLMMessage(role: "user", content: "Generate your next host message to keep the conversation engaging."))
+        llmMessages.append(LLMMessage(role: "user", content: "Respond naturally to what was just said."))
         
         return try await llmService.generateResponse(
             messages: llmMessages,
-            temperature: 0.7,
-            maxTokens: 20 // Very short responses for cost control
+            temperature: dynamicTemperature, // Use dynamic temperature based on mood
+            maxTokens: 40 // Allow natural length responses
         )
     }
     

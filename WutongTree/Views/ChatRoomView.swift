@@ -122,33 +122,22 @@ struct ChatRoomView: View {
             }
             
             VStack(spacing: 15) {
-                // Push-to-Talk Button
-                Button(action: {}) {
+                // Toggle Microphone Button
+                Button(action: {
+                    chatRoomViewModel.toggleMicrophone()
+                }) {
                     VStack(spacing: 8) {
                         Image(systemName: chatRoomViewModel.isUserSpeaking ? "mic.circle.fill" : "mic.circle")
                             .font(.system(size: 40))
                             .foregroundColor(chatRoomViewModel.isUserSpeaking ? .red : .green)
                         
-                        Text(chatRoomViewModel.isUserSpeaking ? "Release to Send" : "Hold to Talk")
+                        Text(chatRoomViewModel.isUserSpeaking ? "Tap to Stop" : "Tap to Talk")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                     .frame(width: 120, height: 80)
                     .background(Circle().fill(chatRoomViewModel.isUserSpeaking ? Color.red.opacity(0.1) : Color.green.opacity(0.1)))
                 }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { _ in
-                            if !chatRoomViewModel.isUserSpeaking {
-                                chatRoomViewModel.startUserSpeech()
-                            }
-                        }
-                        .onEnded { _ in
-                            if chatRoomViewModel.isUserSpeaking {
-                                chatRoomViewModel.stopUserSpeech()
-                            }
-                        }
-                )
                 
                 // Current transcription display
                 if !chatRoomViewModel.userTranscription.isEmpty {
