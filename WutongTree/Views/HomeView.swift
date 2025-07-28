@@ -45,7 +45,7 @@ struct HomeView: View {
             .navigationTitle("WutongTree")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingOnboarding) {
-                OnboardingView(user: Binding(
+                AIOnboardingView(user: Binding(
                     get: { currentUser },
                     set: { updatedUser in
                         authViewModel.currentUser = updatedUser

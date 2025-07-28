@@ -27,6 +27,10 @@
 		B1C2D3FE1234567890ABCDEF /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3FD1234567890ABCDEF /* User.swift */; };
 		B1C2D4001234567890ABCDEF /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3FF1234567890ABCDEF /* ChatRoom.swift */; };
 		B1C2D4021234567890ABCDEF /* AudioPermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */; };
+		C5C8BA6A2E371A3000DD0C5D /* OpenAILLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA682E371A3000DD0C5D /* OpenAILLMService.swift */; };
+		C5C8BA6B2E371A3000DD0C5D /* VLLMLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA692E371A3000DD0C5D /* VLLMLLMService.swift */; };
+		C5C8BA6C2E371A3000DD0C5D /* AnthropicLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA662E371A3000DD0C5D /* AnthropicLLMService.swift */; };
+		C5C8BA6D2E371A3000DD0C5D /* LLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA672E371A3000DD0C5D /* LLMService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +56,10 @@
 		B1C2D3FF1234567890ABCDEF /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
 		B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionService.swift; sourceTree = "<group>"; };
 		C5B709B12E36F9640017CE1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C5C8BA662E371A3000DD0C5D /* AnthropicLLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicLLMService.swift; sourceTree = "<group>"; };
+		C5C8BA672E371A3000DD0C5D /* LLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMService.swift; sourceTree = "<group>"; };
+		C5C8BA682E371A3000DD0C5D /* OpenAILLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAILLMService.swift; sourceTree = "<group>"; };
+		C5C8BA692E371A3000DD0C5D /* VLLMLLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLMLLMService.swift; sourceTree = "<group>"; };
 		E7F8A9B01234567890ABCDEF /* WutongTree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WutongTree.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +154,10 @@
 		B1C2D4061234567890ABCDEF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C5C8BA662E371A3000DD0C5D /* AnthropicLLMService.swift */,
+				C5C8BA672E371A3000DD0C5D /* LLMService.swift */,
+				C5C8BA682E371A3000DD0C5D /* OpenAILLMService.swift */,
+				C5C8BA692E371A3000DD0C5D /* VLLMLLMService.swift */,
 				B1C2D4011234567890ABCDEF /* AudioPermissionService.swift */,
 			);
 			path = Services;
@@ -239,6 +251,10 @@
 				B1C2D3FE1234567890ABCDEF /* User.swift in Sources */,
 				B1C2D4001234567890ABCDEF /* ChatRoom.swift in Sources */,
 				B1C2D4021234567890ABCDEF /* AudioPermissionService.swift in Sources */,
+				C5C8BA6A2E371A3000DD0C5D /* OpenAILLMService.swift in Sources */,
+				C5C8BA6B2E371A3000DD0C5D /* VLLMLLMService.swift in Sources */,
+				C5C8BA6C2E371A3000DD0C5D /* AnthropicLLMService.swift in Sources */,
+				C5C8BA6D2E371A3000DD0C5D /* LLMService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

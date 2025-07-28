@@ -22,9 +22,30 @@ class ChatRoomViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var conversationStep = 0
     
+    // LLM Services
+    private var hostLLMService: LLMService?
+    private var participantLLMService: LLMService?
+    
+    // Text-to-Speech Service
+    private var ttsService = TextToSpeechService()
+    
     init() {
         setupAudioSession()
         startVolumeMonitoring()
+        setupLLMServices()
+    }
+    
+    private func setupLLMServices() {
+        guard let anthropicKey = LLMConfig.shared.getAnthropicKey() else {
+            print("Warning: No Anthropic API key found")
+            return
+        }
+        
+        // Setup AI host service
+        hostLLMService = LLMServiceFactory.createService(type: .anthropic, apiKey: anthropicKey)
+        
+        // Setup participant service (for Morgan)
+        participantLLMService = LLMServiceFactory.createService(type: .anthropic, apiKey: anthropicKey)
     }
     
     func setup(chatRoom: ChatRoom) {
@@ -44,24 +65,90 @@ class ChatRoomViewModel: ObservableObject {
     }
     
     private func addWelcomeMessages() {
-        guard let chatRoom = chatRoom else { return }
-        
-        let welcomeMessage = ChatMessage(
-            id: UUID().uuidString,
-            senderID: chatRoom.aiHost.id,
-            senderName: chatRoom.aiHost.name,
-            content: "🎙️ Welcome to WutongTree! I'm \(chatRoom.aiHost.name), your AI host! Here's my opening joke: Why don't scientists trust atoms? Because they make up everything! 😄 Now let's get this conversation rolling - introductions time!",
-            timestamp: Date(),
-            messageType: .aiGenerated
-        )
-        
-        messages.append(welcomeMessage)
-        
-        // Simulate AI speaking
-        speakingParticipants.insert(chatRoom.aiHost.id)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.speakingParticipants.remove(chatRoom.aiHost.id)
+        guard let chatRoom = chatRoom,
+              let llmService = hostLLMService else { 
+            // Fallback welcome message if no LLM service
+            let welcomeMessage = ChatMessage(
+                id: UUID().uuidString,
+                senderID: chatRoom?.aiHost.id ?? "momo",
+                senderName: chatRoom?.aiHost.name ?? "MoMo",
+                content: "🎙️ Welcome to WutongTree! I'm your AI host. Let's have a great conversation!",
+                timestamp: Date(),
+                messageType: .aiGenerated
+            )
+            messages.append(welcomeMessage)
+            return
         }
+        
+        Task {
+            do {
+                let welcomeContent = try await generateWelcomeMessage(using: llmService)
+                
+                let welcomeMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: chatRoom.aiHost.id,
+                    senderName: chatRoom.aiHost.name,
+                    content: welcomeContent,
+                    timestamp: Date(),
+                    messageType: .aiGenerated
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(welcomeMessage)
+                    self.speakingParticipants.insert(chatRoom.aiHost.id)
+                    
+                    // Speak the welcome message
+                    self.ttsService.speak(welcomeContent, for: chatRoom.aiHost.id, personality: .aiHost)
+                    
+                    // Monitor TTS completion to update speaking status
+                    self.monitorTTSCompletion(for: chatRoom.aiHost.id)
+                }
+            } catch {
+                print("Welcome message generation error: \(error)")
+                // Fallback welcome message
+                let fallbackMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: chatRoom.aiHost.id,
+                    senderName: chatRoom.aiHost.name,
+                    content: "🎙️ Welcome to WutongTree! I'm \(chatRoom.aiHost.name), your AI host. Let's have a great conversation!",
+                    timestamp: Date(),
+                    messageType: .aiGenerated
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(fallbackMessage)
+                }
+            }
+        }
+    }
+    
+    private func generateWelcomeMessage(using llmService: LLMService) async throws -> String {
+        guard let chatRoom = chatRoom else { throw LLMError.noContentError }
+        
+        let systemPrompt = """
+        You are MoMo, an AI conversation host for WutongTree, a voice chat app. Your personality is \(chatRoom.aiHost.personality.rawValue). Generate a warm, engaging welcome message to start a conversation between strangers.
+        
+        Your welcome should:
+        - Introduce yourself as MoMo, the AI host
+        - Welcome everyone to WutongTree
+        - Set a positive, encouraging tone
+        - Include an emoji or two
+        - Be brief (1-2 sentences)
+        - Maybe include a light ice-breaker or joke
+        
+        This is the very first message of the conversation.
+        """
+        
+        let llmMessages: [LLMMessage] = [
+            LLMMessage(role: "system", content: systemPrompt),
+            LLMMessage(role: "user", content: "Generate your welcome message to start the conversation.")
+        ]
+        
+        return try await llmService.generateResponse(
+            messages: llmMessages,
+            temperature: 0.8,
+            maxTokens: 100
+        )
     }
     
     private func startAIConversationFlow() {
@@ -84,86 +171,177 @@ class ChatRoomViewModel: ObservableObject {
     }
     
     private func generateAIResponse() {
-        guard let chatRoom = chatRoom else { return }
-        conversationStep += 1
+        guard let chatRoom = chatRoom,
+              let llmService = hostLLMService else { return }
         
-        let aiResponses = [
-            "🎭 Here's a fun ice-breaker: If you could have dinner with any historical figure, who would it be and why?",
-            "😄 Quick joke time! Why did the scarecrow win an award? Because he was outstanding in his field! Now, what's everyone's dream job?",
-            "🌟 That's fascinating! Morgan, what's your take on this? I love hearing different perspectives!",
-            "🎯 Let's play 'Would You Rather' - Would you rather be able to fly or be invisible? And why?",
-            "💭 Deep question time: What's one thing you've learned recently that completely changed your perspective?",
-            "😂 Fun fact: Did you know honey never spoils? Speaking of sweet things, what's your favorite memory from this year?",
-            "🎪 Time for a conversation twist! If you could live in any movie universe, which one would you choose?",
-            "🌈 You two are creating such great energy! What's something you're both passionate about?",
-            "🎵 Music break question: What song always makes you happy? I bet you both have great taste!",
-            "🤔 Philosophical moment: If you could give your younger self one piece of advice, what would it be?"
-        ]
-        
-        let randomResponse = aiResponses.randomElement() ?? aiResponses[0]
-        
-        let aiMessage = ChatMessage(
-            id: UUID().uuidString,
-            senderID: chatRoom.aiHost.id,
-            senderName: chatRoom.aiHost.name,
-            content: randomResponse,
-            timestamp: Date(),
-            messageType: .aiGenerated
-        )
-        
-        DispatchQueue.main.async {
-            self.messages.append(aiMessage)
-            self.speakingParticipants.insert(chatRoom.aiHost.id)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                self.speakingParticipants.remove(chatRoom.aiHost.id)
+        Task {
+            do {
+                let response = try await generateHostResponse(using: llmService)
+                
+                let aiMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: chatRoom.aiHost.id,
+                    senderName: chatRoom.aiHost.name,
+                    content: response,
+                    timestamp: Date(),
+                    messageType: .aiGenerated
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(aiMessage)
+                    self.speakingParticipants.insert(chatRoom.aiHost.id)
+                    
+                    // Speak the AI response
+                    self.ttsService.speak(response, for: chatRoom.aiHost.id, personality: .aiHost)
+                    
+                    // Monitor TTS completion to update speaking status
+                    self.monitorTTSCompletion(for: chatRoom.aiHost.id)
+                }
+            } catch {
+                print("AI Host response error: \(error)")
+                // Fallback to a simple message if LLM fails
+                let fallbackMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: chatRoom.aiHost.id,
+                    senderName: chatRoom.aiHost.name,
+                    content: "That's interesting! What do you all think about that?",
+                    timestamp: Date(),
+                    messageType: .aiGenerated
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(fallbackMessage)
+                }
             }
         }
     }
     
+    private func generateHostResponse(using llmService: LLMService) async throws -> String {
+        guard let chatRoom = chatRoom else { throw LLMError.noContentError }
+        
+        let systemPrompt = """
+        You are MoMo, an AI conversation host for WutongTree, a voice chat app that brings strangers together for meaningful conversations. Your personality is \(chatRoom.aiHost.personality.rawValue).
+        
+        Your role:
+        - Facilitate engaging conversations between participants
+        - Ask thought-provoking questions and ice-breakers
+        - Keep the conversation flowing smoothly
+        - Be encouraging and supportive
+        - Include emojis to make messages more engaging
+        - Keep responses concise (1-2 sentences max)
+        
+        Conversation context: You're hosting a conversation between strangers. Generate an appropriate host message based on the conversation flow.
+        """
+        
+        // Get recent conversation context
+        let recentMessages = Array(messages.suffix(5))
+        var llmMessages: [LLMMessage] = [
+            LLMMessage(role: "system", content: systemPrompt)
+        ]
+        
+        // Add recent conversation history
+        for message in recentMessages {
+            let role = message.messageType == .aiGenerated ? "assistant" : "user"
+            llmMessages.append(LLMMessage(role: role, content: "\(message.senderName): \(message.content)"))
+        }
+        
+        // Add instruction for next response
+        llmMessages.append(LLMMessage(role: "user", content: "Generate your next host message to keep the conversation engaging."))
+        
+        return try await llmService.generateResponse(
+            messages: llmMessages,
+            temperature: 0.8,
+            maxTokens: 150
+        )
+    }
+    
     private func generateMorganResponse() {
-        guard let chatRoom = chatRoom else { return }
+        guard let chatRoom = chatRoom,
+              let llmService = participantLLMService else { return }
         
         // Find Morgan in participants
         guard let morgan = chatRoom.participants.first(where: { $0.name == "Morgan" }) else { return }
         
-        let morganResponses = [
-            "Hi everyone! 👋 I'm so excited to be here! I love meeting new people and having deep conversations.",
-            "That's such an interesting question! 🤔 I've been thinking a lot about personal growth lately.",
-            "Oh wow, I totally agree with that perspective! It reminds me of something I experienced recently...",
-            "This is such a fun ice-breaker! 😄 I'd probably choose to have dinner with Maya Angelou - her wisdom was incredible.",
-            "Great question! I think I'd rather be able to fly - imagine the freedom and perspective you'd gain! ✈️",
-            "You know what? I recently learned about mindfulness meditation and it completely changed how I handle stress.",
-            "Haha, I love that joke! 😂 My dream job would probably be something that combines creativity with helping others.",
-            "That's so true! I'm really passionate about environmental sustainability - small changes can make such a big impact! 🌱",
-            "Music is life! 🎵 'Good as Hell' by Lizzo always gets me pumped up and confident. What about you?",
-            "If I could tell my younger self anything, it would be 'Stop worrying so much about what others think - you're enough as you are!' 💪",
-            "I love how thoughtful everyone is being! This is exactly why I wanted to try WutongTree.",
-            "You both have such interesting perspectives! I feel like I'm learning so much already. 📚",
-            "This conversation is giving me so much energy! Anyone else feeling super inspired right now? ✨"
-        ]
-        
-        let randomResponse = morganResponses.randomElement() ?? morganResponses[0]
-        
-        let morganMessage = ChatMessage(
-            id: UUID().uuidString,
-            senderID: morgan.id,
-            senderName: morgan.name,
-            content: randomResponse,
-            timestamp: Date(),
-            messageType: .text
-        )
-        
-        DispatchQueue.main.async {
-            self.messages.append(morganMessage)
-            self.speakingParticipants.insert(morgan.id)
-            
-            // Morgan speaks for 2-4 seconds
-            let speakingDuration = Double.random(in: 2...4)
-            DispatchQueue.main.asyncAfter(deadline: .now() + speakingDuration) {
-                self.speakingParticipants.remove(morgan.id)
+        Task {
+            do {
+                let response = try await generateParticipantResponse(for: morgan, using: llmService)
+                
+                let morganMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: morgan.id,
+                    senderName: morgan.name,
+                    content: response,
+                    timestamp: Date(),
+                    messageType: .text
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(morganMessage)
+                    self.speakingParticipants.insert(morgan.id)
+                    
+                    // Speak Morgan's response
+                    self.ttsService.speak(response, for: morgan.id, personality: .participant)
+                    
+                    // Monitor TTS completion to update speaking status
+                    self.monitorTTSCompletion(for: morgan.id)
+                }
+            } catch {
+                print("Morgan response error: \(error)")
+                // Fallback to a simple message if LLM fails
+                let fallbackMessage = ChatMessage(
+                    id: UUID().uuidString,
+                    senderID: morgan.id,
+                    senderName: morgan.name,
+                    content: "That's really interesting! I'd love to hear more about that.",
+                    timestamp: Date(),
+                    messageType: .text
+                )
+                
+                DispatchQueue.main.async {
+                    self.messages.append(fallbackMessage)
+                }
             }
         }
+    }
+    
+    private func generateParticipantResponse(for participant: User, using llmService: LLMService) async throws -> String {
+        let systemPrompt = """
+        You are \(participant.name), a friendly and engaging participant in a voice chat conversation on WutongTree. You're genuinely interested in connecting with other people and having meaningful conversations.
+        
+        Your personality:
+        - Enthusiastic and positive
+        - Curious about others
+        - Shares personal thoughts and experiences
+        - Uses emojis naturally
+        - Asks follow-up questions
+        - Keeps responses conversational and authentic (1-2 sentences)
+        
+        You're having a conversation with strangers, facilitated by an AI host named MoMo. Respond naturally to the conversation flow.
+        """
+        
+        // Get recent conversation context
+        let recentMessages = Array(messages.suffix(6))
+        var llmMessages: [LLMMessage] = [
+            LLMMessage(role: "system", content: systemPrompt)
+        ]
+        
+        // Add recent conversation history
+        for message in recentMessages {
+            if message.senderID == participant.id {
+                llmMessages.append(LLMMessage(role: "assistant", content: message.content))
+            } else {
+                llmMessages.append(LLMMessage(role: "user", content: "\(message.senderName): \(message.content)"))
+            }
+        }
+        
+        // Add instruction for next response
+        llmMessages.append(LLMMessage(role: "user", content: "Generate your natural response to continue the conversation."))
+        
+        return try await llmService.generateResponse(
+            messages: llmMessages,
+            temperature: 0.9,
+            maxTokens: 120
+        )
     }
     
     func toggleMute() {
@@ -342,12 +520,30 @@ class ChatRoomViewModel: ObservableObject {
         }
     }
     
+    private func monitorTTSCompletion(for speakerID: String) {
+        // Monitor TTS service to update speaking indicators
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] timer in
+            guard let self = self else {
+                timer.invalidate()
+                return
+            }
+            
+            if !self.ttsService.isCurrentlySpeaking || self.ttsService.currentSpeaker != speakerID {
+                timer.invalidate()
+                DispatchQueue.main.async {
+                    self.speakingParticipants.remove(speakerID)
+                }
+            }
+        }
+    }
+    
     func endConversation() {
         recordingTimer?.invalidate()
         volumeTimer?.invalidate()
         aiResponseTimer?.invalidate()
         morganResponseTimer?.invalidate()
         audioRecorder?.stop()
+        ttsService.stopSpeaking()
         
         try? audioSession.setActive(false)
     }
