@@ -24,9 +24,23 @@ class TextToSpeechService: NSObject, ObservableObject {
     }
     
     func speak(_ text: String, for speaker: String, personality: SpeechPersonality = .neutral) {
+        print("TTS: 🔊 Speaking text for \(speaker): \(text)")
+        print("TTS: Audio session category: \(audioSession.category)")
+        print("TTS: Audio session active: \(audioSession.isOtherAudioPlaying)")
+        
         // Stop any current speech
         if synthesizer.isSpeaking {
+            print("TTS: Stopping current speech")
             synthesizer.stopSpeaking(at: .immediate)
+        }
+        
+        // Ensure audio session is properly configured for playback
+        do {
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setActive(true)
+            print("TTS: Audio session configured for playback")
+        } catch {
+            print("TTS: ❌ Failed to configure audio session: \(error)")
         }
         
         let utterance = AVSpeechUtterance(string: text)
@@ -35,6 +49,7 @@ class TextToSpeechService: NSObject, ObservableObject {
         currentSpeaker = speaker
         isSpeaking = true
         
+        print("TTS: 🎤 Starting synthesis with rate: \(utterance.rate), pitch: \(utterance.pitchMultiplier), volume: \(utterance.volume)")
         synthesizer.speak(utterance)
     }
     
@@ -77,12 +92,14 @@ class TextToSpeechService: NSObject, ObservableObject {
 // MARK: - Speech Synthesis Delegate
 extension TextToSpeechService: AVSpeechSynthesizerDelegate {
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        print("TTS: ✅ Speech synthesis started")
         DispatchQueue.main.async {
             self.isSpeaking = true
         }
     }
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        print("TTS: ✅ Speech synthesis finished")
         DispatchQueue.main.async {
             self.isSpeaking = false
             self.currentSpeaker = nil

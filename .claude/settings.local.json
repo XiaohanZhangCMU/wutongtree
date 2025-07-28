@@ -11,7 +11,8 @@
       "Bash(cp:*)",
       "Bash(xcodebuild:*)",
       "Bash(find:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

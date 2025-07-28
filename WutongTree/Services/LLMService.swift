@@ -54,6 +54,16 @@ class LLMConfig {
         return ProcessInfo.processInfo.environment["OPENAI_KEY"] ?? loadFromBundle("OPENAI_KEY")
     }
     
+    func getElevenLabsKey() -> String? {
+        let key = ProcessInfo.processInfo.environment["IIElevenLabs"] ?? loadFromBundle("IIElevenLabs")
+        if let key = key {
+            print("🔑 LLMConfig: Found ElevenLabs key: \(key.prefix(10))...")
+        } else {
+            print("❌ LLMConfig: No ElevenLabs API key found")
+        }
+        return key
+    }
+    
     private func loadFromBundle(_ key: String) -> String? {
         // Try to load from .env file in bundle
         guard let path = Bundle.main.path(forResource: ".env", ofType: nil),

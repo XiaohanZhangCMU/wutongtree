@@ -17,7 +17,7 @@ class MatchingViewModel: ObservableObject {
     func findMatch() {
         isSearching = true
         isMatched = false
-        estimatedWaitTime = Double.random(in: 30...120) // 30 seconds to 2 minutes
+        estimatedWaitTime = Double.random(in: 3...8) // 3-8 seconds for testing
         
         // Simulate matching process
         searchTimer = Timer.scheduledTimer(withTimeInterval: estimatedWaitTime, repeats: false) { [weak self] _ in
@@ -30,7 +30,7 @@ class MatchingViewModel: ObservableObject {
         let matchedUser = User(
             id: UUID().uuidString,
             email: "match@example.com",
-            name: ["Alex", "Jordan", "Taylor", "Casey", "Morgan"].randomElement() ?? "Match",
+            name: "Alex", // Fixed name to avoid confusion
             age: Int.random(in: 20...35),
             profileImageURL: nil,
             interests: ["Politics", "Philosophy", "Technology", "Art", "Music"].shuffled().prefix(3).map { String($0) },

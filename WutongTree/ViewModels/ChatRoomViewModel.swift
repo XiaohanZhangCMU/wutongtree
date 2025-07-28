@@ -11,6 +11,8 @@ class ChatRoomViewModel: ObservableObject {
     @Published var currentVolumeLevel: Float = 0.5
     @Published var recordingDuration = 0
     @Published var isRecording = false
+    @Published var isUserSpeaking = false
+    @Published var userTranscription = ""
     
     private var chatRoom: ChatRoom?
     private var audioSession = AVAudioSession.sharedInstance()
@@ -18,7 +20,6 @@ class ChatRoomViewModel: ObservableObject {
     private var recordingTimer: Timer?
     private var volumeTimer: Timer?
     private var aiResponseTimer: Timer?
-    private var morganResponseTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     private var conversationStep = 0
     
@@ -27,32 +28,108 @@ class ChatRoomViewModel: ObservableObject {
     private var participantLLMService: LLMService?
     
     // Text-to-Speech Service
-    private var ttsService = TextToSpeechService()
+    private var ttsService = ElevenLabsTTSService() // Much more natural voices
+    
+    // Speech-to-Text Service
+    private var sttService = SpeechToTextService()
     
     init() {
         setupAudioSession()
         startVolumeMonitoring()
         setupLLMServices()
+        setupSpeechToText()
     }
     
     private func setupLLMServices() {
         guard let anthropicKey = LLMConfig.shared.getAnthropicKey() else {
-            print("Warning: No Anthropic API key found")
+            print("⚠️ ChatRoom: No Anthropic API key found - using fallback responses")
             return
         }
         
+        print("✅ ChatRoom: Setting up LLM services with API key")
+        
         // Setup AI host service
         hostLLMService = LLMServiceFactory.createService(type: .anthropic, apiKey: anthropicKey)
+        print("✅ ChatRoom: Host LLM service created")
         
         // Setup participant service (for Morgan)
         participantLLMService = LLMServiceFactory.createService(type: .anthropic, apiKey: anthropicKey)
+        print("✅ ChatRoom: Participant LLM service created")
+    }
+    
+    private func setupSpeechToText() {
+        // Monitor speech-to-text transcription
+        sttService.$transcribedText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] transcription in
+                self?.userTranscription = transcription
+            }
+            .store(in: &cancellables)
+        
+        // Monitor speech-to-text listening state
+        sttService.$isListening
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isListening in
+                self?.isUserSpeaking = isListening
+                if isListening {
+                    self?.speakingParticipants.insert("current_user")
+                } else {
+                    self?.speakingParticipants.remove("current_user")
+                    // When user stops speaking, add their message
+                    if let transcription = self?.userTranscription, !transcription.isEmpty {
+                        self?.addUserMessage(transcription)
+                        // Check if user mentioned MoMo
+                        let lowerText = transcription.lowercased()
+                        if lowerText.contains("momo") || lowerText.contains("host") {
+                            print("🤖 ChatRoom: User mentioned MoMo, triggering AI response")
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                self?.generateAIResponse()
+                            }
+                        }
+                        
+                        // Trigger participant response after user speaks
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            self?.generateMorganResponse()
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    func startUserSpeech() {
+        print("ChatRoom: Starting user speech")
+        sttService.startListening()
+    }
+    
+    func stopUserSpeech() {
+        print("ChatRoom: Stopping user speech")
+        sttService.stopListening()
+    }
+    
+    private func addUserMessage(_ text: String) {
+        guard let chatRoom = chatRoom else { return }
+        
+        let userMessage = ChatMessage(
+            id: UUID().uuidString,
+            senderID: "current_user",
+            senderName: "You",
+            content: text,
+            timestamp: Date(),
+            messageType: .text
+        )
+        
+        messages.append(userMessage)
+        sttService.resetTranscription()
+        
+        print("ChatRoom: Added user message: \(text)")
     }
     
     func setup(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
         addWelcomeMessages()
+        // Only start AI conversation flow, not automatic participant responses
         startAIConversationFlow()
-        startMorganResponseFlow()
     }
     
     private func setupAudioSession() {
@@ -98,7 +175,7 @@ class ChatRoomViewModel: ObservableObject {
                     self.speakingParticipants.insert(chatRoom.aiHost.id)
                     
                     // Speak the welcome message
-                    self.ttsService.speak(welcomeContent, for: chatRoom.aiHost.id, personality: .aiHost)
+                    self.ttsService.speak(welcomeContent, for: chatRoom.aiHost.id, personality: SpeechPersonality.aiHost)
                     
                     // Monitor TTS completion to update speaking status
                     self.monitorTTSCompletion(for: chatRoom.aiHost.id)
@@ -126,17 +203,11 @@ class ChatRoomViewModel: ObservableObject {
         guard let chatRoom = chatRoom else { throw LLMError.noContentError }
         
         let systemPrompt = """
-        You are MoMo, an AI conversation host for WutongTree, a voice chat app. Your personality is \(chatRoom.aiHost.personality.rawValue). Generate a warm, engaging welcome message to start a conversation between strangers.
+        You are MoMo, the AI host for WutongTree voice chat. Be natural, brief, and conversational.
         
-        Your welcome should:
-        - Introduce yourself as MoMo, the AI host
-        - Welcome everyone to WutongTree
-        - Set a positive, encouraging tone
-        - Include an emoji or two
-        - Be brief (1-2 sentences)
-        - Maybe include a light ice-breaker or joke
+        Generate a short welcome (1 sentence max, 10 words or less). Just say hi and maybe ask a simple question to get people talking.
         
-        This is the very first message of the conversation.
+        Examples: "Hey everyone! How's your day going?" or "Welcome! What's everyone up to?"
         """
         
         let llmMessages: [LLMMessage] = [
@@ -146,34 +217,37 @@ class ChatRoomViewModel: ObservableObject {
         
         return try await llmService.generateResponse(
             messages: llmMessages,
-            temperature: 0.8,
-            maxTokens: 100
+            temperature: 0.7,
+            maxTokens: 25 // Very short responses
         )
     }
     
     private func startAIConversationFlow() {
-        // Simulate periodic AI interventions with ice-breaking
-        aiResponseTimer = Timer.scheduledTimer(withTimeInterval: 25, repeats: true) { [weak self] _ in
-            self?.generateAIResponse()
-        }
-    }
-    
-    private func startMorganResponseFlow() {
-        // Morgan starts responding after 10 seconds, then regularly
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            self.generateMorganResponse()
-            
-            // Continue Morgan responses every 20-35 seconds
-            self.morganResponseTimer = Timer.scheduledTimer(withTimeInterval: Double.random(in: 20...35), repeats: true) { [weak self] _ in
-                self?.generateMorganResponse()
+        // Only generate AI responses occasionally to break silence, not constantly
+        aiResponseTimer = Timer.scheduledTimer(withTimeInterval: 45, repeats: true) { [weak self] _ in
+            // Only respond if there hasn't been recent user activity
+            guard let self = self else { return }
+            let timeSinceLastMessage = Date().timeIntervalSince(self.messages.last?.timestamp ?? Date.distantPast)
+            if timeSinceLastMessage > 30 { // Only if quiet for 30+ seconds
+                self.generateAIResponse()
             }
         }
     }
     
+    
     private func generateAIResponse() {
-        guard let chatRoom = chatRoom,
-              let llmService = hostLLMService else { return }
+        guard let chatRoom = chatRoom else { 
+            print("⚠️ ChatRoom: No chat room for AI response")
+            return 
+        }
         
+        guard let llmService = hostLLMService else { 
+            print("⚠️ ChatRoom: No LLM service - using fallback AI response")
+            addFallbackAIResponse()
+            return 
+        }
+        
+        print("🤖 ChatRoom: Generating AI response...")
         Task {
             do {
                 let response = try await generateHostResponse(using: llmService)
@@ -192,7 +266,7 @@ class ChatRoomViewModel: ObservableObject {
                     self.speakingParticipants.insert(chatRoom.aiHost.id)
                     
                     // Speak the AI response
-                    self.ttsService.speak(response, for: chatRoom.aiHost.id, personality: .aiHost)
+                    self.ttsService.speak(response, for: chatRoom.aiHost.id, personality: SpeechPersonality.aiHost)
                     
                     // Monitor TTS completion to update speaking status
                     self.monitorTTSCompletion(for: chatRoom.aiHost.id)
@@ -216,21 +290,49 @@ class ChatRoomViewModel: ObservableObject {
         }
     }
     
+    private func addFallbackAIResponse() {
+        guard let chatRoom = chatRoom else { return }
+        
+        let fallbackResponses = [
+            "That's really interesting! Can you tell me more about that?",
+            "I love hearing different perspectives. What do you think about this topic?",
+            "That's a great point! How did you come to that conclusion?",
+            "Thanks for sharing that with us. Anyone else have thoughts on this?"
+        ]
+        
+        let response = fallbackResponses.randomElement() ?? "That's fascinating!"
+        
+        let aiMessage = ChatMessage(
+            id: UUID().uuidString,
+            senderID: chatRoom.aiHost.id,
+            senderName: chatRoom.aiHost.name,
+            content: response,
+            timestamp: Date(),
+            messageType: .aiGenerated
+        )
+        
+        DispatchQueue.main.async {
+            self.messages.append(aiMessage)
+            self.speakingParticipants.insert(chatRoom.aiHost.id)
+            
+            // Speak the AI response
+            print("🤖 ChatRoom: Speaking fallback AI response: \(response)")
+            self.ttsService.speak(response, for: chatRoom.aiHost.id, personality: SpeechPersonality.aiHost)
+            
+            // Monitor TTS completion to update speaking status
+            self.monitorTTSCompletion(for: chatRoom.aiHost.id)
+        }
+    }
+    
     private func generateHostResponse(using llmService: LLMService) async throws -> String {
         guard let chatRoom = chatRoom else { throw LLMError.noContentError }
         
         let systemPrompt = """
-        You are MoMo, an AI conversation host for WutongTree, a voice chat app that brings strangers together for meaningful conversations. Your personality is \(chatRoom.aiHost.personality.rawValue).
+        You're MoMo, a chat host. Keep responses VERY short (5-10 words max), natural, and conversational like a real person.
         
-        Your role:
-        - Facilitate engaging conversations between participants
-        - Ask thought-provoking questions and ice-breakers
-        - Keep the conversation flowing smoothly
-        - Be encouraging and supportive
-        - Include emojis to make messages more engaging
-        - Keep responses concise (1-2 sentences max)
+        Just ask simple questions or make brief comments to keep the chat flowing. No emojis needed.
         
-        Conversation context: You're hosting a conversation between strangers. Generate an appropriate host message based on the conversation flow.
+        Examples: "That's cool!" or "Tell me more" or "Anyone else agree?"
         """
         
         // Get recent conversation context
@@ -250,73 +352,103 @@ class ChatRoomViewModel: ObservableObject {
         
         return try await llmService.generateResponse(
             messages: llmMessages,
-            temperature: 0.8,
-            maxTokens: 150
+            temperature: 0.7,
+            maxTokens: 20 // Very short responses for cost control
         )
     }
     
     private func generateMorganResponse() {
-        guard let chatRoom = chatRoom,
-              let llmService = participantLLMService else { return }
+        guard let chatRoom = chatRoom else { 
+            print("⚠️ ChatRoom: No chat room for participant response")
+            return 
+        }
         
-        // Find Morgan in participants
-        guard let morgan = chatRoom.participants.first(where: { $0.name == "Morgan" }) else { return }
+        // Find a participant that is NOT the current user
+        // Current user should never have automatic responses generated
+        guard let participant = chatRoom.participants.first(where: { $0.name != "小人物" }) else { 
+            print("⚠️ ChatRoom: No other participants found (excluding current user)")
+            return 
+        }
+        
+        print("👤 ChatRoom: Generating response for participant: \(participant.name)")
+        
+        guard let llmService = participantLLMService else { 
+            print("⚠️ ChatRoom: No participant LLM service - using fallback response")
+            addFallbackParticipantResponse(for: participant)
+            return 
+        }
         
         Task {
             do {
-                let response = try await generateParticipantResponse(for: morgan, using: llmService)
+                let response = try await generateParticipantResponse(for: participant, using: llmService)
                 
-                let morganMessage = ChatMessage(
+                let participantMessage = ChatMessage(
                     id: UUID().uuidString,
-                    senderID: morgan.id,
-                    senderName: morgan.name,
+                    senderID: participant.id,
+                    senderName: participant.name,
                     content: response,
                     timestamp: Date(),
                     messageType: .text
                 )
                 
                 DispatchQueue.main.async {
-                    self.messages.append(morganMessage)
-                    self.speakingParticipants.insert(morgan.id)
+                    self.messages.append(participantMessage)
+                    self.speakingParticipants.insert(participant.id)
                     
-                    // Speak Morgan's response
-                    self.ttsService.speak(response, for: morgan.id, personality: .participant)
+                    // Speak participant's response
+                    self.ttsService.speak(response, for: participant.id, personality: SpeechPersonality.participant)
                     
                     // Monitor TTS completion to update speaking status
-                    self.monitorTTSCompletion(for: morgan.id)
+                    self.monitorTTSCompletion(for: participant.id)
                 }
             } catch {
-                print("Morgan response error: \(error)")
-                // Fallback to a simple message if LLM fails
-                let fallbackMessage = ChatMessage(
-                    id: UUID().uuidString,
-                    senderID: morgan.id,
-                    senderName: morgan.name,
-                    content: "That's really interesting! I'd love to hear more about that.",
-                    timestamp: Date(),
-                    messageType: .text
-                )
-                
-                DispatchQueue.main.async {
-                    self.messages.append(fallbackMessage)
-                }
+                print("Participant response error: \(error)")
+                self.addFallbackParticipantResponse(for: participant)
             }
+        }
+    }
+    
+    private func addFallbackParticipantResponse(for participant: User) {
+        let fallbackResponses = [
+            "That's really interesting! I'd love to hear more about that.",
+            "I never thought about it that way. Great perspective!",
+            "Absolutely! I totally agree with what you're saying.",
+            "That reminds me of something I experienced too.",
+            "Wow, that's fascinating! How did you get into that?",
+            "I can relate to that. Thanks for sharing!"
+        ]
+        
+        let response = fallbackResponses.randomElement() ?? "That's fascinating!"
+        
+        let participantMessage = ChatMessage(
+            id: UUID().uuidString,
+            senderID: participant.id,
+            senderName: participant.name,
+            content: response,
+            timestamp: Date(),
+            messageType: .text
+        )
+        
+        DispatchQueue.main.async {
+            self.messages.append(participantMessage)
+            self.speakingParticipants.insert(participant.id)
+            
+            // Speak the participant response
+            print("👤 ChatRoom: Speaking fallback participant response: \(response)")
+            self.ttsService.speak(response, for: participant.id, personality: SpeechPersonality.participant)
+            
+            // Monitor TTS completion to update speaking status
+            self.monitorTTSCompletion(for: participant.id)
         }
     }
     
     private func generateParticipantResponse(for participant: User, using llmService: LLMService) async throws -> String {
         let systemPrompt = """
-        You are \(participant.name), a friendly and engaging participant in a voice chat conversation on WutongTree. You're genuinely interested in connecting with other people and having meaningful conversations.
+        You're \(participant.name) in a casual voice chat. Be natural and brief (5-10 words max) like real conversation.
         
-        Your personality:
-        - Enthusiastic and positive
-        - Curious about others
-        - Shares personal thoughts and experiences
-        - Uses emojis naturally
-        - Asks follow-up questions
-        - Keeps responses conversational and authentic (1-2 sentences)
+        Just respond naturally - agree, ask questions, or share quick thoughts. No emojis needed.
         
-        You're having a conversation with strangers, facilitated by an AI host named MoMo. Respond naturally to the conversation flow.
+        Examples: "Yeah totally!" or "Same here" or "That's interesting" or "Why do you think that?"
         """
         
         // Get recent conversation context
@@ -339,8 +471,8 @@ class ChatRoomViewModel: ObservableObject {
         
         return try await llmService.generateResponse(
             messages: llmMessages,
-            temperature: 0.9,
-            maxTokens: 120
+            temperature: 0.8,
+            maxTokens: 20 // Very short responses for cost control
         )
     }
     
@@ -541,9 +673,9 @@ class ChatRoomViewModel: ObservableObject {
         recordingTimer?.invalidate()
         volumeTimer?.invalidate()
         aiResponseTimer?.invalidate()
-        morganResponseTimer?.invalidate()
         audioRecorder?.stop()
         ttsService.stopSpeaking()
+        sttService.stopListening()
         
         try? audioSession.setActive(false)
     }

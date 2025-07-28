@@ -31,6 +31,12 @@
 		C5C8BA6B2E371A3000DD0C5D /* VLLMLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA692E371A3000DD0C5D /* VLLMLLMService.swift */; };
 		C5C8BA6C2E371A3000DD0C5D /* AnthropicLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA662E371A3000DD0C5D /* AnthropicLLMService.swift */; };
 		C5C8BA6D2E371A3000DD0C5D /* LLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA672E371A3000DD0C5D /* LLMService.swift */; };
+		C5C8BA6F2E373B4800DD0C5D /* TextToSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA6E2E373B4800DD0C5D /* TextToSpeechService.swift */; };
+		C5C8BA7D2E373F2700DD0C5D /* SpeechToTextService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA7C2E373F2700DD0C5D /* SpeechToTextService.swift */; };
+		C5C8BA7F2E373FB600DD0C5D /* OnboardingInterviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA7E2E373FB600DD0C5D /* OnboardingInterviewViewModel.swift */; };
+		C5C8BA812E373FC700DD0C5D /* AIOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA802E373FC700DD0C5D /* AIOnboardingView.swift */; };
+		C5C8BA832E37448A00DD0C5D /* .env in Resources */ = {isa = PBXBuildFile; fileRef = C5C8BA822E37448A00DD0C5D /* .env */; };
+		C5C8BA852E3747B600DD0C5D /* ElevenLabsTTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C8BA842E3747B600DD0C5D /* ElevenLabsTTSService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +66,12 @@
 		C5C8BA672E371A3000DD0C5D /* LLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMService.swift; sourceTree = "<group>"; };
 		C5C8BA682E371A3000DD0C5D /* OpenAILLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAILLMService.swift; sourceTree = "<group>"; };
 		C5C8BA692E371A3000DD0C5D /* VLLMLLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLMLLMService.swift; sourceTree = "<group>"; };
+		C5C8BA6E2E373B4800DD0C5D /* TextToSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeechService.swift; sourceTree = "<group>"; };
+		C5C8BA7C2E373F2700DD0C5D /* SpeechToTextService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechToTextService.swift; sourceTree = "<group>"; };
+		C5C8BA7E2E373FB600DD0C5D /* OnboardingInterviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingInterviewViewModel.swift; sourceTree = "<group>"; };
+		C5C8BA802E373FC700DD0C5D /* AIOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIOnboardingView.swift; sourceTree = "<group>"; };
+		C5C8BA822E37448A00DD0C5D /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+		C5C8BA842E3747B600DD0C5D /* ElevenLabsTTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsTTSService.swift; sourceTree = "<group>"; };
 		E7F8A9B01234567890ABCDEF /* WutongTree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WutongTree.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +89,7 @@
 		A1B2C3C71234567890ABCDEF = {
 			isa = PBXGroup;
 			children = (
+				C5C8BA822E37448A00DD0C5D /* .env */,
 				A1B2C3D21234567890ABCDEF /* WutongTree */,
 				A1B2C3D11234567890ABCDEF /* Products */,
 			);
@@ -118,6 +131,7 @@
 		B1C2D4031234567890ABCDEF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C5C8BA802E373FC700DD0C5D /* AIOnboardingView.swift */,
 				B1C2D3EB1234567890ABCDEF /* WelcomeView.swift */,
 				B1C2D3ED1234567890ABCDEF /* MainTabView.swift */,
 				B1C2D3EF1234567890ABCDEF /* HomeView.swift */,
@@ -134,6 +148,7 @@
 		B1C2D4041234567890ABCDEF /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C5C8BA7E2E373FB600DD0C5D /* OnboardingInterviewViewModel.swift */,
 				B1C2D3E31234567890ABCDEF /* AuthenticationViewModel.swift */,
 				B1C2D3E51234567890ABCDEF /* VoiceRecordingViewModel.swift */,
 				B1C2D3E71234567890ABCDEF /* MatchingViewModel.swift */,
@@ -154,6 +169,9 @@
 		B1C2D4061234567890ABCDEF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C5C8BA842E3747B600DD0C5D /* ElevenLabsTTSService.swift */,
+				C5C8BA7C2E373F2700DD0C5D /* SpeechToTextService.swift */,
+				C5C8BA6E2E373B4800DD0C5D /* TextToSpeechService.swift */,
 				C5C8BA662E371A3000DD0C5D /* AnthropicLLMService.swift */,
 				C5C8BA672E371A3000DD0C5D /* LLMService.swift */,
 				C5C8BA682E371A3000DD0C5D /* OpenAILLMService.swift */,
@@ -221,6 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5C8BA832E37448A00DD0C5D /* .env in Resources */,
 				A1B2C3DB1234567890ABCDEF /* Preview Assets.xcassets in Resources */,
 				A1B2C3D81234567890ABCDEF /* Assets.xcassets in Resources */,
 			);
@@ -239,18 +258,23 @@
 				B1C2D3E61234567890ABCDEF /* VoiceRecordingViewModel.swift in Sources */,
 				B1C2D3E81234567890ABCDEF /* MatchingViewModel.swift in Sources */,
 				B1C2D3EA1234567890ABCDEF /* ChatRoomViewModel.swift in Sources */,
+				C5C8BA6F2E373B4800DD0C5D /* TextToSpeechService.swift in Sources */,
 				B1C2D3EC1234567890ABCDEF /* WelcomeView.swift in Sources */,
 				B1C2D3EE1234567890ABCDEF /* MainTabView.swift in Sources */,
 				B1C2D3F01234567890ABCDEF /* HomeView.swift in Sources */,
 				B1C2D3F21234567890ABCDEF /* OnboardingView.swift in Sources */,
 				B1C2D3F41234567890ABCDEF /* ChatRoomView.swift in Sources */,
 				B1C2D3F61234567890ABCDEF /* ProfileView.swift in Sources */,
+				C5C8BA7D2E373F2700DD0C5D /* SpeechToTextService.swift in Sources */,
 				B1C2D3F81234567890ABCDEF /* ConversationHistoryView.swift in Sources */,
+				C5C8BA7F2E373FB600DD0C5D /* OnboardingInterviewViewModel.swift in Sources */,
 				B1C2D3FA1234567890ABCDEF /* SettingsView.swift in Sources */,
 				B1C2D3FC1234567890ABCDEF /* FeedbackView.swift in Sources */,
 				B1C2D3FE1234567890ABCDEF /* User.swift in Sources */,
 				B1C2D4001234567890ABCDEF /* ChatRoom.swift in Sources */,
 				B1C2D4021234567890ABCDEF /* AudioPermissionService.swift in Sources */,
+				C5C8BA852E3747B600DD0C5D /* ElevenLabsTTSService.swift in Sources */,
+				C5C8BA812E373FC700DD0C5D /* AIOnboardingView.swift in Sources */,
 				C5C8BA6A2E371A3000DD0C5D /* OpenAILLMService.swift in Sources */,
 				C5C8BA6B2E371A3000DD0C5D /* VLLMLLMService.swift in Sources */,
 				C5C8BA6C2E371A3000DD0C5D /* AnthropicLLMService.swift in Sources */,

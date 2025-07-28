@@ -121,37 +121,76 @@ struct ChatRoomView: View {
                 .padding(.horizontal)
             }
             
-            HStack(spacing: 30) {
-                // Mute button
-                Button(action: {
-                    chatRoomViewModel.toggleMute()
-                }) {
-                    Image(systemName: chatRoomViewModel.isMuted ? "mic.slash.fill" : "mic.fill")
-                        .font(.title)
-                        .foregroundColor(chatRoomViewModel.isMuted ? .red : .primary)
-                        .frame(width: 60, height: 60)
-                        .background(Circle().fill(Color(.systemGray5)))
+            VStack(spacing: 15) {
+                // Push-to-Talk Button
+                Button(action: {}) {
+                    VStack(spacing: 8) {
+                        Image(systemName: chatRoomViewModel.isUserSpeaking ? "mic.circle.fill" : "mic.circle")
+                            .font(.system(size: 40))
+                            .foregroundColor(chatRoomViewModel.isUserSpeaking ? .red : .green)
+                        
+                        Text(chatRoomViewModel.isUserSpeaking ? "Release to Send" : "Hold to Talk")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(width: 120, height: 80)
+                    .background(Circle().fill(chatRoomViewModel.isUserSpeaking ? Color.red.opacity(0.1) : Color.green.opacity(0.1)))
                 }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            if !chatRoomViewModel.isUserSpeaking {
+                                chatRoomViewModel.startUserSpeech()
+                            }
+                        }
+                        .onEnded { _ in
+                            if chatRoomViewModel.isUserSpeaking {
+                                chatRoomViewModel.stopUserSpeech()
+                            }
+                        }
+                )
                 
-                // Speaker button
-                Button(action: {
-                    chatRoomViewModel.toggleSpeaker()
-                }) {
-                    Image(systemName: chatRoomViewModel.speakerOn ? "speaker.wave.3.fill" : "speaker.fill")
-                        .font(.title)
-                        .foregroundColor(.primary)
-                        .frame(width: 60, height: 60)
-                        .background(Circle().fill(Color(.systemGray5)))
-                }
-                
-                // Volume indicator
-                VStack {
-                    Text("Volume")
+                // Current transcription display
+                if !chatRoomViewModel.userTranscription.isEmpty {
+                    Text(chatRoomViewModel.userTranscription)
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                        .lineLimit(2)
+                }
+                
+                HStack(spacing: 20) {
+                    // Mute button
+                    Button(action: {
+                        chatRoomViewModel.toggleMute()
+                    }) {
+                        Image(systemName: chatRoomViewModel.isMuted ? "mic.slash.fill" : "mic.fill")
+                            .font(.title2)
+                            .foregroundColor(chatRoomViewModel.isMuted ? .red : .primary)
+                            .frame(width: 50, height: 50)
+                            .background(Circle().fill(Color(.systemGray5)))
+                    }
                     
-                    VolumeIndicator(level: chatRoomViewModel.currentVolumeLevel)
-                        .frame(width: 60, height: 30)
+                    // Speaker button
+                    Button(action: {
+                        chatRoomViewModel.toggleSpeaker()
+                    }) {
+                        Image(systemName: chatRoomViewModel.speakerOn ? "speaker.wave.3.fill" : "speaker.fill")
+                            .font(.title2)
+                            .foregroundColor(.primary)
+                            .frame(width: 50, height: 50)
+                            .background(Circle().fill(Color(.systemGray5)))
+                    }
+                    
+                    // Volume indicator
+                    VStack {
+                        Text("Volume")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        
+                        VolumeIndicator(level: chatRoomViewModel.currentVolumeLevel)
+                            .frame(width: 50, height: 20)
+                    }
                 }
             }
             .padding()

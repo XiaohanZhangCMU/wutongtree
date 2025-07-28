@@ -10,6 +10,8 @@
 	<string>WutongTree uses the camera to let you add a profile photo during onboarding.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>WutongTree needs access to your photo library to let you select a profile photo.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>WutongTree uses speech recognition to convert your voice messages to text during conversations.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
