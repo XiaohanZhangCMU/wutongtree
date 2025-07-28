@@ -7,7 +7,11 @@
       "Bash(./run_integration_tests.sh:*)",
       "Bash(rm:*)",
       "Bash(./fix_build_issues.sh:*)",
-      "Bash(./verify_build_setup.sh:*)"
+      "Bash(./verify_build_setup.sh:*)",
+      "Bash(cp:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(find:*)",
+      "Bash(open:*)"
     ],
     "deny": []
   }
